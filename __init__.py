@@ -9,7 +9,7 @@ from calibre.customize import StoreBase
 
 class BokusStore(StoreBase):
     name            = 'Bokus'
-    version         = (0,1,0)
+    version         = (2025, 3, 0)
     description     = 'Handla böcker online - billigt, snabbt & enkelt!'
     author          = 'Leonardo Brondani Schenkel <leonardo@schenkel.net>'
     actual_plugin   = 'calibre_plugins.lbschenkel_store_bokus_se.bokus:BokusStorePlugin'
