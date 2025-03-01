@@ -26,7 +26,7 @@ class BokusStore(GenericStore):
 
     url                = 'https://www.bokus.com'
     search_url         = '{0}/cgi-bin/product_search.cgi?binding_normalized=ebok&search_word={1}'
-    words_drm_locked   = ['adobe-kryptering']
+    words_drm_locked   = ['adobe-kryptering', 'lcp-kryptering']
     words_drm_unlocked = ['vattenmärke']
 
     def find_search_results(self, doc):
