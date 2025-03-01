@@ -5,7 +5,7 @@ __license__   = 'GPL 3'
 __copyright__ = '2017, Leonardo Brondani Schenkel <leonardo@schenkel.net>'
 __docformat__ = 'restructuredtext en'
 
-import urllib
+from six.moves import urllib
 
 from PyQt5.Qt import QUrl
 from contextlib import closing
