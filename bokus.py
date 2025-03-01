@@ -17,6 +17,8 @@ from calibre.gui2.store import StorePlugin
 from calibre.gui2.store.search_result import SearchResult
 from calibre.gui2.store.web_store_dialog import WebStoreDialog
 
+import re
+
 if __name__ == '__main__':
     from lib import GenericStore, xpath, text
 else:
@@ -36,9 +38,10 @@ class BokusStore(GenericStore):
         r = SearchResult()
         r.detail_item = text(node, './/*', 'Item__title', '/a/@href')
         r.title       = text(node, './/*', 'Item__title', '/a/text()')
-        r.author      = text(node, './/*', 'Item__authors')
+        r.author      = text(node, './/*', 'Item__authors', '/a/text()')
         r.price       = text(node, './/*', 'pricing__price') + ' kr'
-        r.formats     = text(node, './/*', 'Item__format-as-link')
+        r.formats     = text(node, './/*', 'Item__format')
+        r.drm         = r.formats
         r.cover_url   = text(node, './/img', 'Item__image', '/@data-src')
         return r
 
@@ -62,15 +65,30 @@ class BokusStore(GenericStore):
     def normalize_author(self, text):
         if text.startswith('av '):
             text = text[3:].strip()
-        return text
+        return super().normalize_author(text)
 
     def normalize_formats(self, text):
         if text.startswith('EPUB'):
             return 'EPUB'
         elif text.startswith('PDF'):
             return 'PDF'
+        elif text.startswith('E-bok'):
+            return 'PDF' if 'PDF' in text else 'EPUB'
         else:
-            return text
+            return super().normalize_formats(text)
+
+    def normalize_drm(self, text):
+        if text.startswith('E-bok'):
+            match = re.search('\\((.+)\\)', text)
+            if match:
+                matches = [m.strip() for m in match.group(1).split(',')]
+                if 'DRM' in matches:
+                    return SearchResult.DRM_LOCKED
+                elif 'LCP' in matches:
+                    return SearchResult.DRM_LOCKED
+            return SearchResult.DRM_UNLOCKED
+        else:
+            return super().normalize_drm(text)
 
 class BokusStorePlugin(StorePlugin):
     store = BokusStore()
